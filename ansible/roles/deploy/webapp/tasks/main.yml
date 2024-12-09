@@ -6,6 +6,8 @@
     recursive: true
     use_ssh_args: true
     delete: false
+    rsync_opts:
+      - "--exclude=vendor"
 
 - name: Composer install
   become: false
