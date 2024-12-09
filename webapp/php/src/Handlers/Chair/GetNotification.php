@@ -19,6 +19,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class GetNotification extends AbstractHttpHandler
 {
+    private const int RETRY_AFTER_MS = 1000;
+
     public function __construct(
         private readonly PDO $db,
     ) {
@@ -38,7 +40,7 @@ class GetNotification extends AbstractHttpHandler
             $ride = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$ride) {
                 $this->db->rollBack();
-                return $this->writeJson($response, new ChairGetNotification200Response(['retry_after_ms' => 30]));
+                return $this->writeJson($response, new ChairGetNotification200Response(['retry_after_ms' => self::RETRY_AFTER_MS]));
             }
 
             $stmt = $this->db->prepare(
@@ -101,7 +103,7 @@ class GetNotification extends AbstractHttpHandler
                             ),
                             'status' => $status
                         ]),
-                    'retry_after_ms' => 30
+                    'retry_after_ms' => self::RETRY_AFTER_MS
                 ])
             );
         } catch (PDOException $e) {

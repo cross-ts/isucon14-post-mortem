@@ -88,6 +88,9 @@ class GetNearbyChairs extends AbstractHttpHandler
             foreach ($chairs as $chair) {
                 $latitude = $chair['latitude'];
                 $longitude = $chair['longitude'];
+                if ($latitude === null || $longitude === null) {
+                    continue;
+                }
                 $chair = new Chair(
                     id: $chair['id'],
                     ownerId: $chair['owner_id'],
