@@ -13,6 +13,7 @@ init:
 SSH := ssh -F $(CURDIR)/.ssh/config
 RSYNC := rsync -e "$(SSH)" --rsync-path "sudo rsync"
 WEBAPP := isucon1
+WEBAPP2 := isucon2
 DB := isucon3
 
 .PHONY: deploy
@@ -31,12 +32,14 @@ post-bench:
 # Logs: Download #
 ##################
 NOW := $(shell gdate --iso-8601=seconds)
+NOW2 := $(shell gdate --iso-8601=seconds --date '1 second ago')
 NGINX_LOG_FILE := /var/log/nginx/access.jsonl.gz
 MYSQL_LOG_FILE := /var/log/mysql/slow.log
 
 .PHONY: nginx-log
 nginx-log:
 	@$(RSYNC) $(WEBAPP):$(NGINX_LOG_FILE) logs/nginx/$(NOW).jsonl.gz
+	@$(RSYNC) $(WEBAPP2):$(NGINX_LOG_FILE) logs/nginx/$(NOW2).jsonl.gz
 
 .PHONY: mysql-log
 mysql-log:
@@ -49,6 +52,7 @@ mysql-log:
 truncate:
 	@$(SSH) $(DB) "sudo truncate --size 0 $(MYSQL_LOG_FILE)"
 	@$(SSH) $(WEBAPP) "sudo truncate --size 0 $(NGINX_LOG_FILE)"
+	@$(SSH) $(WEBAPP2) "sudo truncate --size 0 $(NGINX_LOG_FILE)"
 
 .PHONY: logs
 logs: nginx-log mysql-log truncate

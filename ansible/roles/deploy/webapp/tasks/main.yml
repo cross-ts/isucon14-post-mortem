@@ -24,6 +24,17 @@
     use_ssh_args: true
     delete: false
 
+- name: Deploy php settings
+  become: false
+  synchronize:
+    src: "{{ playbook_dir }}/../php/etc/"
+    dest: "/home/{{ isucon_user }}/local/php/etc/"
+    recursive: true
+    use_ssh_args: true
+    delete: false
+  notify:
+    - restart webapp
+
 - name: Deploy env.sh
   become: false
   synchronize:
