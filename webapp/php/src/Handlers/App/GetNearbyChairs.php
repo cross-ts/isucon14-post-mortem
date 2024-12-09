@@ -86,6 +86,8 @@ class GetNearbyChairs extends AbstractHttpHandler
             $chairs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $nearbyChairs = [];
             foreach ($chairs as $chair) {
+                $latitude = $chair['latitude'];
+                $longitude = $chair['longitude'];
                 $chair = new Chair(
                     id: $chair['id'],
                     ownerId: $chair['owner_id'],
@@ -114,27 +116,11 @@ class GetNearbyChairs extends AbstractHttpHandler
                     continue;
                 }
 
-                // 最新の位置情報を取得
-                $stmt = $this->db->prepare(
-                    'SELECT * FROM chair_locations WHERE chair_id = ? ORDER BY created_at DESC LIMIT 1'
-                );
-                $stmt->execute([$chair->id]);
-                $chairLocationResult = $stmt->fetch(PDO::FETCH_ASSOC);
-                if (!$chairLocationResult) {
-                    continue;
-                }
-                $chairLocation = new ChairLocation(
-                    id: $chairLocationResult['id'],
-                    chairId: $chairLocationResult['chair_id'],
-                    latitude: $chairLocationResult['latitude'],
-                    longitude: $chairLocationResult['longitude'],
-                    createdAt: $chairLocationResult['created_at']
-                );
                 $distanceToChair = $this->calculateDistance(
                     $coordinate->getLatitude(),
                     $coordinate->getLongitude(),
-                    $chairLocation->latitude,
-                    $chairLocation->longitude
+                    $latitude,
+                    $longitude,
                 );
                 if ($distanceToChair <= $distance) {
                     $nearbyChairs[] = new AppGetNearbyChairs200ResponseChairsInner([
@@ -142,8 +128,8 @@ class GetNearbyChairs extends AbstractHttpHandler
                         'name' => $chair->name,
                         'model' => $chair->model,
                         'current_coordinate' => new Coordinate([
-                            'latitude' => $chairLocation->latitude,
-                            'longitude' => $chairLocation->longitude,
+                            'latitude' => $latitude,
+                            'longitude' => $longitude,
                         ]),
                     ]);
                 }
