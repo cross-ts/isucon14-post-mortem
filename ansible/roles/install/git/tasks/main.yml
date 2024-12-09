@@ -1,0 +1,8 @@
+- include_tasks:
+    file: "{{ ansible_os_family | lower }}.yml"
+
+- become: false
+  copy:
+    src: .config/git
+    dest: ~/.config/
+    force: false

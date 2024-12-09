@@ -1,0 +1,6 @@
+file: /var/log/nginx/access.log
+sort: sum
+reverse: true
+format: md
+output: count,1xx,2xx,3xx,4xx,5xx,method,uri,sum,avg,p99,sum_body,avg_body
+matching_groups:

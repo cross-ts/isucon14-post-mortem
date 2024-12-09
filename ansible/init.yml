@@ -1,0 +1,27 @@
+- hosts: all
+  tags:
+    - always
+  pre_tasks:
+    - local_action:
+        module: ansible.builtin.command
+        cmd: "awk '/User / {print $2}' {{ playbook_dir }}/../.ssh/config"
+      register: isucon_user
+      become: false
+    - name: Set isucon_user
+      set_fact:
+        isucon_user: "{{ isucon_user.stdout }}"
+  become: true
+  roles:
+    - install/alp
+    - install/git
+    - install/htop
+    - install/mysqldef
+    - install/percona-toolkit
+    - install/tig
+    - install/valkey
+    - install/pie
+    - setting/disable-apparmor
+    - setting/disable-selinux
+    - deploy/repo
+    - deploy/nginx
+    - deploy/mysql

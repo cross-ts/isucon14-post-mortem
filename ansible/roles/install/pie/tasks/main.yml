@@ -1,0 +1,9 @@
+- name: install ext-zip
+  include_tasks:
+    file: "{{ ansible_os_family | lower }}.yml"
+
+- name: install pie
+  get_url:
+    url: "https://github.com/php/pie/releases/download/{{ pie_version }}/pie.phar"
+    dest: /usr/local/bin/pie
+    mode: 0755

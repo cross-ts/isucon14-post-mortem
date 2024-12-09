@@ -1,0 +1,5 @@
+- name: restart webapp
+  systemd:
+    name: isuconp
+    state: restarted
+    enabled: true

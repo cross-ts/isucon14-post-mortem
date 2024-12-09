@@ -1,0 +1,7 @@
+- name: install mysqldef for {{ arch[ansible_architecture] }}
+  unarchive:
+    src: "{{ download_url }}/{{ version }}/mysqldef_linux_{{ arch[ansible_architecture] }}.tar.gz"
+    dest: /usr/local/bin
+    creates: /usr/local/bin/mysqldef
+    remote_src: true
+    mode: 0755

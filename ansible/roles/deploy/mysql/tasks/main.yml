@@ -1,0 +1,16 @@
+- name: Deploy MySQL conf
+  synchronize:
+    src: "{{ playbook_dir }}/../mysql/"
+    dest: /etc/mysql/
+    recursive: true
+    use_ssh_args: true
+    delete: false
+  notify: reload mysql
+
+#- name: Deploy schema.sql
+#  synchronize:
+#    src: "{{ playbook_dir }}/../schema.sql"
+#    dest: /home/{{ isucon_user }}/schema.sql
+#    use_ssh_args: true
+#    delete: false
+#  notify: apply schema.sql

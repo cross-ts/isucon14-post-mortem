@@ -1,0 +1,15 @@
+- name: Ddeploy webapp
+  become: false
+  synchronize:
+    src: "{{ playbook_dir }}/../webapp/"
+    dest: "/home/{{ isucon_user }}/webapp/"
+    recursive: true
+    use_ssh_args: true
+    delete: false
+  #notify: restart webapp
+
+#- name: Composer install
+#  become: false
+#  command:
+#    cmd: composer install --no-dev --optimize-autoloader
+#    chdir: "/home/{{ isucon_user }}/webapp/php"

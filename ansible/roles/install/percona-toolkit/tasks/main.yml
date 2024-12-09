@@ -1,0 +1,8 @@
+- name: check pt-query-digest installed
+  command: which pt-query-digest
+  register: pt_installed
+  ignore_errors: true
+
+- include_tasks:
+    file: "{{ ansible_os_family | lower }}.yml"
+  when: pt_installed is failed

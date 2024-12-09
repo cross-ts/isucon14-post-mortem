@@ -1,0 +1,3 @@
+- dnf:
+    name: php-zip
+    state: present

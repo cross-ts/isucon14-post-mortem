@@ -1,0 +1,8 @@
+- name: Deploy nginx conf
+  synchronize:
+    src: "{{ playbook_dir }}/../nginx/"
+    dest: /etc/nginx/
+    recursive: true
+    use_ssh_args: true
+    delete: false
+  notify: reload nginx

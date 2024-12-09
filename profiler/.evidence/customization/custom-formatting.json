@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "customFormats": [
+    {
+      "formatTag": "bytes",
+      "formatCode": "[<1000]0\"B\";[<1000000]0.00,\"KB\";[<1000000000]0.00,,\"MB\"",
+      "valueType": "number"
+    }
+  ]
+}

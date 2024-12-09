@@ -1,0 +1,17 @@
+[alias]
+br = branch
+co = checkout
+cm = commit
+st = status
+sw = switch
+
+[init]
+defaultBranch = main
+
+[core]
+excludesfile = ~/.config/git/ignore
+ignorecase = false
+
+[user]
+email = isucon@example.com
+name = ISUCON[bot]

@@ -1,0 +1,14 @@
+- name: import percona gpg key
+  rpm_key:
+    key: https://repo.percona.com/yum/PERCONA-PACKAGING-KEY
+    state: present
+- name: install percona-release
+  dnf:
+    name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+    state: present
+- name: setup pt
+  command: percona-release enable pt
+- name: install percona-toolkit
+  dnf:
+    name: percona-toolkit
+    state: present

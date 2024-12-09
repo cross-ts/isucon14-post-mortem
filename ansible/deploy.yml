@@ -1,0 +1,23 @@
+- hosts: all
+  tags:
+    - always
+  pre_tasks:
+    - local_action:
+        module: ansible.builtin.command
+        cmd: "awk '/User / {print $2}' {{ playbook_dir }}/../.ssh/config"
+      register: isucon_user
+      become: false
+    - name: Set isucon_user
+      set_fact:
+        isucon_user: "{{ isucon_user.stdout }}"
+
+- hosts: webapp
+  become: true
+  roles:
+    - deploy/nginx
+    - deploy/webapp
+
+- hosts: db
+  become: true
+  roles:
+    - deploy/mysql

@@ -1,0 +1,6 @@
+ansible_ssh_common_args: "-F {{ playbook_dir }}/../.ssh/config"
+arch:
+  x86_64: amd64
+  arm64: arm64
+
+isucon_app: isuconp

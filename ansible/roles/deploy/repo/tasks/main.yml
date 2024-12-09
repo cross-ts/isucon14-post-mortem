@@ -1,0 +1,12 @@
+- local_action:
+    module: ansible.builtin.command
+    cmd: git remote get-url origin
+  become: false
+  register: git_remote_url
+
+- git:
+    repo: "{{ git_remote_url.stdout }}"
+    dest: "{{ git_remote_url.stdout | basename }}"
+    accept_hostkey: true
+  become: false
+  become_flags: "--preserve-env=SSH_AUTH_SOCK"

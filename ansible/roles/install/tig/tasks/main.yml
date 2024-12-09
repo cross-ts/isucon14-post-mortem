@@ -1,0 +1,2 @@
+- include_tasks:
+    file: "{{ ansible_os_family | lower }}.yml"

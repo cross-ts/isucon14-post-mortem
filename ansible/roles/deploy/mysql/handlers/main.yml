@@ -1,0 +1,9 @@
+- name: reload mysql
+  systemd_service:
+    name: mysql
+    state: restarted
+    enabled: true
+
+- name: apply schema.sql
+  shell: "mysqldef -u{{ isucon_app }} -p{{ isucon_app }} {{ isucon_app }} < /home/{{ isucon_user }}/schema.sql"
+  become: false

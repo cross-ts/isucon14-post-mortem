@@ -1,0 +1,3 @@
+- apt:
+    name: valkey
+    state: present
