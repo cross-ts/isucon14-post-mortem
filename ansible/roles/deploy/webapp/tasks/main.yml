@@ -31,4 +31,6 @@
     dest: "/home/{{ isucon_user }}/env.sh"
     use_ssh_args: true
     delete: false
-  notify: restart webapp
+  notify:
+    - restart webapp
+    - restart isuride-matcher

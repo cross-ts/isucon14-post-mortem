@@ -51,7 +51,7 @@ class GetMatching extends AbstractHttpHandler
         if (!$empty) {
             return $this->writeNoContent($response);
         }
-        $stmt = $this->db->prepare('UPDATE rides SET chair_id = ? WHERE id = ?');
+        $stmt = $this->db->prepare('UPDATE rides SET chair_id = ? WHERE id = ? AND chair_id IS NULL');
         $stmt->execute([$matched['id'], $ride['id']]);
         return $this->writeNoContent($response);
     }

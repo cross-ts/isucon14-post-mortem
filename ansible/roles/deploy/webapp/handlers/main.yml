@@ -3,3 +3,9 @@
     name: isuride-php
     state: restarted
     enabled: true
+
+- name: restart isuride-matcher
+  systemd:
+    name: isuride-matcher
+    state: restarted
+    enabled: true

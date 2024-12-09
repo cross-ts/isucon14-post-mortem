@@ -1,1 +1,1 @@
-select * from all_access_logs;
+-- select * from all_access_logs;
