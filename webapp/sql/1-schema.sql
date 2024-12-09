@@ -36,6 +36,7 @@ CREATE TABLE chairs
 )
   COMMENT = '椅子情報テーブル';
 alter table chairs add index i1(access_token);
+alter table chairs add index i2(owner_id);
 
 DROP TABLE IF EXISTS chair_locations;
 CREATE TABLE chair_locations
@@ -96,6 +97,7 @@ CREATE TABLE rides
 )
   COMMENT = 'ライド情報テーブル';
 alter table rides add index i1(chair_id, updated_at desc);
+alter table rides add index i2(user_id, created_at desc);
 
 DROP TABLE IF EXISTS ride_statuses;
 CREATE TABLE ride_statuses
@@ -138,3 +140,4 @@ CREATE TABLE coupons
   PRIMARY KEY (user_id, code)
 )
   COMMENT 'クーポンテーブル';
+alter table coupons add index i1(used_by);
