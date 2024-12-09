@@ -66,7 +66,7 @@ SQL
             ]);
 
             $stmt = $this->db->prepare(
-                'SELECT * FROM rides WHERE chair_id = ? ORDER BY updated_at DESC LIMIT 1'
+                'SELECT * FROM rides WHERE chair_id = ? ORDER BY id DESC LIMIT 1'
             );
             $stmt->execute([$chair->id]);
             $ride = $stmt->fetch(PDO::FETCH_ASSOC);
