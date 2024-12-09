@@ -1,15 +1,32 @@
-- name: Ddeploy webapp
+- name: Deploy webapp
   become: false
   synchronize:
-    src: "{{ playbook_dir }}/../webapp/"
-    dest: "/home/{{ isucon_user }}/webapp/"
+    src: "{{ playbook_dir }}/../webapp/php/"
+    dest: "/home/{{ isucon_user }}/webapp/php/"
     recursive: true
     use_ssh_args: true
     delete: false
-  #notify: restart webapp
 
-#- name: Composer install
-#  become: false
-#  command:
-#    cmd: composer install --no-dev --optimize-autoloader
-#    chdir: "/home/{{ isucon_user }}/webapp/php"
+- name: Composer install
+  become: false
+  shell:
+    cmd: bash -lc "composer install --no-dev --optimize-autoloader"
+    chdir: "/home/{{ isucon_user }}/webapp/php"
+
+- name: Deploy sql
+  become: false
+  synchronize:
+    src: "{{ playbook_dir }}/../webapp/sql/"
+    dest: "/home/{{ isucon_user }}/webapp/sql/"
+    recursive: true
+    use_ssh_args: true
+    delete: false
+
+- name: Deploy env.sh
+  become: false
+  synchronize:
+    src: "{{ playbook_dir }}/../env.sh"
+    dest: "/home/{{ isucon_user }}/env.sh"
+    use_ssh_args: true
+    delete: false
+  notify: restart webapp

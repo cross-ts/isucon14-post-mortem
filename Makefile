@@ -13,7 +13,7 @@ init:
 SSH := ssh -F $(CURDIR)/.ssh/config
 RSYNC := rsync -e "$(SSH)" --rsync-path "sudo rsync"
 WEBAPP := isucon1
-DB := isucon1
+DB := isucon3
 
 .PHONY: deploy
 deploy:
@@ -37,7 +37,6 @@ MYSQL_LOG_FILE := /var/log/mysql/slow.log
 .PHONY: nginx-log
 nginx-log:
 	@$(RSYNC) $(WEBAPP):$(NGINX_LOG_FILE) logs/nginx/$(NOW).jsonl.gz
-	@$(SSH) $(WEBAPP) "sudo truncate --size 0 $(NGINX_LOG_FILE)"
 
 .PHONY: mysql-log
 mysql-log:
@@ -45,10 +44,14 @@ mysql-log:
 	@$(RSYNC) $(DB):$(MYSQL_LOG_FILE).gz ./logs/mysql/$(shell gdate --iso-8601=seconds).log.gz
 	@$(MAKE) slow.jsonl.gz
 	@cp slow.jsonl.gz logs/mysql/$(NOW).jsonl.gz
+
+.PHONY: truncate
+truncate:
 	@$(SSH) $(DB) "sudo truncate --size 0 $(MYSQL_LOG_FILE)"
+	@$(SSH) $(WEBAPP) "sudo truncate --size 0 $(NGINX_LOG_FILE)"
 
 .PHONY: logs
-logs: nginx-log mysql-log
+logs: nginx-log mysql-log truncate
 
 #################
 # Logs: Profile #
@@ -83,7 +86,7 @@ alp: $(DUCKDB_FILE)
 pt: slow.log
 	@pt-query-digest slow.log
 
-$(DUCKDB_FILE): access.jsonl.gz slow.jsonl.gz duckdb/macros.sql duckdb/last_access_logs.sql duckdb/last_slow_logs.sql
+$(DUCKDB_FILE): access.jsonl.gz slow.jsonl.gz duckdb/macros.sql duckdb/last_access_logs.sql duckdb/last_slow_logs.sql duckdb/macros.sql
 	@duckdb $(DUCKDB_FILE) \
 		-s "$(shell cat duckdb/macros.sql)" \
 		-s "$(shell cat duckdb/last_access_logs.sql)" \
