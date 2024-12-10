@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace IsuRide\Handlers\Internal;
 
 use IsuRide\Handlers\AbstractHttpHandler;
+use IsuRide\Database\Model\ChairModel;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use PDO;
@@ -57,7 +58,10 @@ SQL
                 break;
             }
             $matched = $this->findMatchedChair($ride, $availableChairs);
-
+            // region内に椅子がない場合はスキップ
+            if ($matched === null) {
+                continue;
+            }
             $stmt = $this->db->prepare('UPDATE rides SET chair_id = ? WHERE id = ? AND chair_id IS NULL');
             try {
                 $stmt->execute([$matched['id'], $ride['id']]);
@@ -68,20 +72,48 @@ SQL
         return $this->writeNoContent($response);
     }
 
-    private function findMatchedChair(array $ride, array &$availableChairs): array
+    private function findMatchedChair(array $ride, array &$availableChairs): ?array
     {
-        $minDistance = PHP_INT_MAX;
-        $matched = null;
+        $maxScore = 0;
+        $matched = [];
         $key = null;
         foreach ($availableChairs as $index => $chair) {
-            $distance = abs($ride['pickup_latitude'] - $chair['latitude']) + abs($ride['pickup_longitude'] - $chair['longitude']);
-            if ($distance < $minDistance) {
-                $minDistance = $distance;
+            $score = $this->calculateScore($ride, $chair);
+            if ($score > $maxScore) {
+                $maxScore = $score;
                 $matched = $chair;
                 $key = $index;
             }
         }
+        if ($key === null) {
+            return null;
+        }
         unset($availableChairs[$key]);
         return $matched;
+    }
+
+    private function calculateScore(array $ride, array $chair): float
+    {
+        $pickupDistance = $this->calculateDistance(
+            $ride['pickup_latitude'],
+            $ride['pickup_longitude'],
+            $chair['latitude'],
+            $chair['longitude']
+        );
+        $destinationDistance = $this->calculateDistance(
+            $chair['latitude'],
+            $chair['longitude'],
+            $ride['destination_latitude'],
+            $ride['destination_longitude']
+        );
+
+        // region間の移動は優先度を最低にする
+        if ($destinationDistance > 400) {
+            return -PHP_INT_MAX;
+        }
+        $score = $pickupDistance * 0.1 + $destinationDistance + 5;
+        $speed = ChairModel::getAll()[$chair['name']] ?? 1;
+        $time = $pickupDistance / $speed + $destinationDistance / $speed;
+        return $score / $time;
     }
 }
